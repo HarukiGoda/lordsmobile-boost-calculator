@@ -26,6 +26,7 @@ import Image from "next/image"
 import { InfoIcon } from "lucide-react"
 import { PrevStepButton } from "@/components/steps/prev-step"
 import { Separator } from "@workspace/ui/components/separator"
+import croppingSample from "@/public/cropping-sample.png"
 
 function CropActions({
   step,
@@ -102,10 +103,8 @@ export function CropImagePage({ step }: StepProps) {
                 </DialogDescription>
               </DialogHeader>
               <Image
-                src="/cropping-sample.png"
+                src={croppingSample}
                 alt="cropping-sample"
-                width={600}
-                height={600}
                 className="mx-auto"
               />
             </DialogContent>
