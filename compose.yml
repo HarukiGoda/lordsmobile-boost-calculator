@@ -1,0 +1,17 @@
+services:
+  app:
+      image: oven/bun:alpine
+      ports:
+        - "3000:3000"
+      volumes:
+          - type: bind
+            source: .
+            target: /app
+          - type: volume
+            source: next_cache
+            target: /app/apps/web/.next
+      working_dir: /app
+      command: sleep infinity
+
+volumes:
+  next_cache:
