@@ -1,16 +1,20 @@
-import { BOOSTS } from "./boosts"
+import { BOOSTS_INFO } from "./boosts"
 import { totalBoost } from "./total"
-import { Boost } from "./types"
+import type { Boost, TsvKey } from "./types"
 
-export function boostsToTSV(
-  boosts: readonly Boost[],
-  key: keyof Boost
-): string {
-  const sorted: Boost[typeof key][] = new Array(BOOSTS.flat().length)
+// remove column if isOcrOnly ==- true
+export function boostsToTSV(boosts: readonly Boost[], key: TsvKey): string {
+  const sorted = BOOSTS_INFO.flat()
+    .filter((b) => !b.isOcrOnly)
+    .map((b) => ({
+      boost: b,
+      noLord: 0,
+      withLord: 0,
+    })) satisfies Boost[]
   boosts.forEach((b) => {
-    BOOSTS.flat().find((n, i) => {
-      if (n === b.name) {
-        sorted[i] = b[key]
+    ;[...sorted].find((n, i) => {
+      if (n.boost.name === b.boost.name) {
+        ;(sorted[i] as Boost) = b as Boost
         return true
       }
       return false
@@ -18,8 +22,8 @@ export function boostsToTSV(
   })
 
   if (key === "name") {
-    return ["総合値", ...sorted].join("\t")
+    return ["総合値", ...sorted.map((s) => s.boost.name)].join("\t")
   }
 
-  return [totalBoost(boosts, key), ...sorted].join("\t")
+  return [totalBoost(boosts, key), ...sorted.map((s) => s[key])].join("\t")
 }

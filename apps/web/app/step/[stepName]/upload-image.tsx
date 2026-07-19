@@ -25,13 +25,14 @@ function DynamicFooterAction({
   disabled: boolean
 }) {
   return (
-    <NextStepKeepParamButton
-      nextStep={step + 1}
-      disabled={disabled}
-      className="mx-auto w-fit"
-    >
-      次へ
-    </NextStepKeepParamButton>
+    <>
+      <NextStepKeepParamButton variant="destructive" nextStep={step + 3}>
+        読み込みをスキップ
+      </NextStepKeepParamButton>
+      <NextStepKeepParamButton nextStep={step + 1} disabled={disabled}>
+        次へ
+      </NextStepKeepParamButton>
+    </>
   )
 }
 
@@ -54,10 +55,10 @@ export function UploadImagePage({ step, boosts }: StepProps) {
           <ImageInput
             onFileChange={setImage}
             label={""}
-            description={`${boosts[0]}～${boosts[boosts.length - 1]}が含まれている画像をアップロードしてください。`}
+            description={`${boosts[0].name}～${boosts[boosts.length - 1]?.name}が含まれている画像をアップロードしてください。`}
           />
         </CardContent>
-        <CardFooter className="relative z-30 flex min-h-15 items-center justify-center">
+        <CardFooter className="relative z-30 flex min-h-15 items-center justify-around">
           <Suspense
             fallback={
               <span className="animate-pulse text-sm text-muted-foreground">

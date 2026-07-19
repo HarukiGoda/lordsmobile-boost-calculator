@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@workspace/ui/components/table"
-import { EditableBoost, BoostName } from "@/lib/boost/types"
+import { EditableBoost, BoostInfo } from "@/lib/boost/types"
 import { isValidDecimal, normalizeInputNumber } from "@/lib/boost/validation"
 import { useState } from "react"
 
@@ -33,7 +33,7 @@ export function EditableBoostsTable({
   const [boosts, setBoosts] = useState(initialBoosts)
 
   const updateBoost = (
-    name: BoostName,
+    targetBoost: BoostInfo,
     key: "noLord" | "withLord",
     value: string
   ) => {
@@ -42,7 +42,7 @@ export function EditableBoostsTable({
     if (!isValidDecimal(n)) return
 
     const next = boosts.map((boost) =>
-      boost.name === name
+      boost.boost.name === targetBoost.name
         ? {
             ...boost,
             [key]: n,
@@ -69,16 +69,10 @@ export function EditableBoostsTable({
       <TableBody>
         {boosts.map((b) => (
           <TableRow
-            key={b.name}
-            className={
-              b.name.includes("攻撃力")
-                ? "bg-muted/80"
-                : b.name.includes("HP")
-                  ? "bg-muted/40"
-                  : ""
-            }
+            key={b.boost.name}
+            className={b.boost.isOcrOnly ? "text-muted-foreground/80" : ""}
           >
-            <TableCell className="font-medium">{b.name}</TableCell>
+            <TableCell className="font-medium">{b.boost.name}</TableCell>
 
             <TableCell>
               <Popover>
@@ -92,7 +86,7 @@ export function EditableBoostsTable({
                     inputMode="decimal"
                     value={b.noLord}
                     onChange={(e) =>
-                      updateBoost(b.name, "noLord", e.target.value)
+                      updateBoost(b.boost, "noLord", e.target.value)
                     }
                     className="w-fit"
                   />
@@ -112,7 +106,7 @@ export function EditableBoostsTable({
                     inputMode="decimal"
                     value={b.withLord}
                     onChange={(e) =>
-                      updateBoost(b.name, "withLord", e.target.value)
+                      updateBoost(b.boost, "withLord", e.target.value)
                     }
                     className="w-fit"
                   />

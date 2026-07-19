@@ -1,6 +1,10 @@
-import { BoostName, EditableBoost } from "../boost/types"
+import { BOOSTS_INFO } from "../boost/boosts"
+import { EditableBoost } from "../boost/types"
 
-export function parseBoostOCR(text: string, names: readonly BoostName[]) {
+export function parseBoostOCR(
+  text: string,
+  boosts: (typeof BOOSTS_INFO)[number]
+): EditableBoost[] {
   if (!text) {
     return []
   }
@@ -10,13 +14,13 @@ export function parseBoostOCR(text: string, names: readonly BoostName[]) {
 
   return [
     ...lines,
-    ...(new Array(Math.max(0, names.length - lines.length)).fill(
+    ...(new Array(Math.max(0, boosts.length - lines.length)).fill(
       ""
     ) as string[]),
   ]
     .map((line, i) => {
       const b: EditableBoost = {
-        name: names[i]!,
+        boost: boosts[i] ?? boosts[0], // it is ok because we slice the array later
         noLord: "",
         withLord: "",
       }
@@ -37,5 +41,5 @@ export function parseBoostOCR(text: string, names: readonly BoostName[]) {
       if (words.length == 1) b.withLord = b.noLord
       return b
     })
-    .slice(0, names.length)
+    .slice(0, boosts.length)
 }

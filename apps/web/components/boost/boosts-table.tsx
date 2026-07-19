@@ -31,8 +31,8 @@ export function BoostsTable({ boosts, className }: BoostsTableProps) {
 
       <TableBody>
         {boosts.map((b) => (
-          <TableRow key={b.name}>
-            <TableCell className="font-medium">{b.name}</TableCell>
+          <TableRow key={b.boost.name}>
+            <TableCell className="font-medium">{b.boost.name}</TableCell>
             <TableCell>{b.noLord}</TableCell>
             <TableCell>{b.withLord}</TableCell>
           </TableRow>

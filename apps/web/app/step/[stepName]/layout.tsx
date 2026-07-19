@@ -8,12 +8,14 @@ import {
 export const dynamicParams = false
 
 export async function generateStaticParams(): Promise<StaticParams[]> {
-  const params = STEPS as StaticParams[]
+  const params = STEPS.map((step) => ({
+    stepName: step.stepName,
+  })) satisfies StaticParams[]
   return params
 }
 
 export interface StaticParams {
-  stepName: string
+  stepName: string // typeof STEPS[number]["stepName"]
 }
 
 export default async function Layout({
@@ -25,6 +27,7 @@ export default async function Layout({
 }) {
   const { stepName } = await params
   const { boosts } = STEPS[Number(stepName) - 1]!
+
   return (
     <main className="flex h-svh flex-col">
       <header className="shrink-0 p-4">
@@ -35,7 +38,7 @@ export default async function Layout({
           <ProgressLabel>
             <span>Step: {stepName}</span>
             <span className="ml-4">
-              {boosts[0]}～{boosts[boosts.length - 1]}
+              {boosts[0].name}～{boosts[boosts.length - 1]!.name}
             </span>
           </ProgressLabel>
           <ProgressValue />

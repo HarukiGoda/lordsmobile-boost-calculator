@@ -66,7 +66,7 @@ function OcrResultSection({
       <CardContent>
         {!loading ? (
           <EditableBoostsTable
-            key={parsedBoosts.map((b) => b.name).join()}
+            key={parsedBoosts.map((b) => b.boost.name).join()}
             initialBoosts={currentBoosts}
             onChange={setBoostsState}
           />
@@ -137,7 +137,7 @@ export function OcrImagePage({ step, boosts }: StepProps) {
               alt="OCR Target"
               width={0}
               height={0}
-              className="aspect-auto h-auto max-h-full w-full object-contain"
+              className="aspect-auto h-auto max-h-full w-full rounded-lg border object-contain shadow-sm"
               unoptimized
             />
           )}

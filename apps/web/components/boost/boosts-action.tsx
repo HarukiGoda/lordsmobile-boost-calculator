@@ -1,7 +1,7 @@
 "use client"
 
 import { boostsToTSV } from "@/lib/boost/tsv"
-import { Boost } from "@/lib/boost/types"
+import { Boost, TsvKey } from "@/lib/boost/types"
 import { Button } from "@workspace/ui/components/button"
 import { CopyIcon, Share2Icon } from "lucide-react"
 import { useState } from "react"
@@ -11,9 +11,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu"
+import { cn } from "@workspace/ui/lib/utils"
 
 export interface BoostsActionsProps {
   boosts: Boost[]
+  className?: string
 }
 
 const buttons = [
@@ -21,14 +23,14 @@ const buttons = [
   { key: "noLord", label: "通常時" },
   { key: "withLord", label: "ロード出陣時" },
 ] satisfies {
-  key: keyof Boost
+  key: TsvKey
   label: string
 }[]
 
-export function BoostsActions({ boosts }: BoostsActionsProps) {
+export function BoostsActions({ boosts, className }: BoostsActionsProps) {
   const [copied, setCopied] = useState<boolean>(false)
 
-  async function handleCopy(key: keyof Boost) {
+  async function handleCopy(key: TsvKey) {
     await navigator.clipboard.writeText(boostsToTSV(boosts, key))
 
     setCopied(true)
@@ -39,7 +41,7 @@ export function BoostsActions({ boosts }: BoostsActionsProps) {
   }
 
   return (
-    <div className="flex gap-2">
+    <div className={cn("flex gap-2", className)}>
       <Button
         variant="outline"
         size="icon"

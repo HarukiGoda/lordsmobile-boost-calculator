@@ -9,6 +9,8 @@ import { Button } from "@workspace/ui/components/button"
 import { useRouter } from "next/navigation"
 
 export interface StepKeepParamButtonProps {
+  variant?:
+    "default" | "secondary" | "destructive" | "outline" | "ghost" | "link"
   nextStep: number
   className?: string
   children?: React.ReactNode
@@ -21,6 +23,7 @@ export interface StepButtonProps extends StepKeepParamButtonProps {
 
 // Must be used in Suspense
 export function NextStepKeepParamButton({
+  variant,
   className,
   nextStep,
   children,
@@ -31,6 +34,7 @@ export function NextStepKeepParamButton({
   return (
     <Button
       size="lg"
+      variant={variant}
       className={className}
       onClick={() => {
         if (nextStep > STEPS[STEPS.length - 1]!.step) {

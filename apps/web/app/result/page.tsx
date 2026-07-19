@@ -19,6 +19,10 @@ import {
 import { Badge } from "@workspace/ui/components/badge"
 import { useRouter } from "next/navigation"
 import { encodeBoosts } from "@/lib/codec/boost-codec"
+import { BOOSTS_INFO } from "@/lib/boost/boosts"
+import { buttonVariants } from "@workspace/ui/components/button"
+import Link from "next/link"
+import { cn } from "@workspace/ui/lib/utils"
 
 function DynamicTotal({
   type,
@@ -63,12 +67,35 @@ function DynamicTableContainer({
   }, [getBoostsParam, onDataChange])
 
   return (
-    <EditableBoostsTable initialBoosts={boosts ?? []} onChange={onDataChange} />
+    <EditableBoostsTable
+      initialBoosts={
+        boosts?.filter((b) => !b.boost.isOcrOnly) ??
+        BOOSTS_INFO.flat()
+          .filter((b) => !b.isOcrOnly)
+          .map((b) => ({
+            boost: b,
+            withLord: "0",
+            noLord: "0",
+          }))
+      }
+      onChange={onDataChange}
+    />
   )
 }
 
-function DynamicActions({ boosts }: { boosts: EditableBoost[] | null }) {
-  return <BoostsActions boosts={boosts ? boosts.map(normalizeBoost) : []} />
+function DynamicActions({
+  boosts,
+  className,
+}: {
+  boosts: EditableBoost[] | null
+  className?: string
+}) {
+  return (
+    <BoostsActions
+      className={className}
+      boosts={boosts ? boosts.map(normalizeBoost) : []}
+    />
+  )
 }
 
 export default function Page() {
@@ -77,7 +104,16 @@ export default function Page() {
 
   const handleDataChange = (newData: EditableBoost[]) => {
     startTransition(() => {
-      setBoosts(newData)
+      setBoosts(
+        BOOSTS_INFO.flat().map(
+          (b) =>
+            newData.find((n) => n.boost.name === b.name) || {
+              boost: b,
+              withLord: "",
+              noLord: "",
+            }
+        )
+      )
     })
 
     encodeBoosts(newData.map(normalizeBoost)).then((encoded) => {
@@ -132,10 +168,20 @@ export default function Page() {
             </Badge>
           </div>
         </CardContent>
-        <CardFooter className="lg:hidden">
+        <CardFooter>
           <Suspense fallback={null}>
-            <DynamicActions boosts={boosts} />
+            <DynamicActions className="lg:hidden" boosts={boosts} />
           </Suspense>
+
+          <Link
+            className={cn(
+              buttonVariants({ variant: "destructive", size: "default" }),
+              "ml-auto lg:mx-auto"
+            )}
+            href="/step/1"
+          >
+            最初から計算する
+          </Link>
         </CardFooter>
       </Card>
 
