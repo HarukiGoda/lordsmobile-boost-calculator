@@ -17,6 +17,8 @@ import {
   CardTitle,
 } from "@workspace/ui/components/card"
 import { Badge } from "@workspace/ui/components/badge"
+import { useRouter } from "next/navigation"
+import { encodeBoosts } from "@/lib/codec/boost-codec"
 
 function DynamicTotal({
   type,
@@ -71,10 +73,15 @@ function DynamicActions({ boosts }: { boosts: EditableBoost[] | null }) {
 
 export default function Page() {
   const [boosts, setBoosts] = useState<EditableBoost[] | null>(null)
+  const router = useRouter()
 
   const handleDataChange = (newData: EditableBoost[]) => {
     startTransition(() => {
       setBoosts(newData)
+    })
+
+    encodeBoosts(newData.map(normalizeBoost)).then((encoded) => {
+      router.replace(`/result?boosts=${encoded}`)
     })
   }
 
