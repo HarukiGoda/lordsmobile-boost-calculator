@@ -143,7 +143,7 @@ export default function Page() {
             あなたの総合値
           </CardTitle>
           <CardAction className="flex items-center gap-2">
-            <Label htmlFor="wonder-active">ワンダー</Label>
+            <Label htmlFor="wonder-active">ワンダー出陣時</Label>
             <Switch
               id="wonder-active"
               checked={isWonderActive}
@@ -167,6 +167,14 @@ export default function Page() {
             >
               ロード出陣時
             </Badge>
+            {isWonderActive && (
+              <Badge
+                className="mt-2 ml-2 bg-emerald-500/20 text-muted-foreground"
+                variant="outline"
+              >
+                ワンダー出陣時
+              </Badge>
+            )}
           </div>
           <div className="min-h-25 rounded-lg border bg-muted/40 p-4">
             <p className="text-4xl font-bold lg:text-6xl">
@@ -183,6 +191,14 @@ export default function Page() {
             >
               ロードなし
             </Badge>
+            {isWonderActive && (
+              <Badge
+                className="mt-2 ml-2 bg-muted/60 text-muted-foreground"
+                variant="outline"
+              >
+                ワンダー出陣時
+              </Badge>
+            )}
           </div>
         </CardContent>
         <CardFooter>
