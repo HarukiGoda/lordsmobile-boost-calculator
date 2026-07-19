@@ -3,7 +3,7 @@
 import { EditableBoostsTable } from "@/components/boost/editable-boosts-table"
 import { useBoostsParam } from "@/hooks/use-boosts-param"
 import { useState, useEffect, Suspense, startTransition, useRef } from "react"
-import { EditableBoost } from "@/lib/boost/types"
+import { Boost, EditableBoost } from "@/lib/boost/types"
 import { BoostsActions } from "@/components/boost/boosts-action"
 import { totalBoost } from "@/lib/boost/total"
 import { normalizeBoost } from "@/lib/boost/normalize"
@@ -16,6 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card"
+import { Switch } from "@workspace/ui/components/switch"
 import { Badge } from "@workspace/ui/components/badge"
 import { useRouter } from "next/navigation"
 import { encodeBoosts } from "@/lib/codec/boost-codec"
@@ -23,19 +24,31 @@ import { BOOSTS_INFO } from "@/lib/boost/boosts"
 import { buttonVariants } from "@workspace/ui/components/button"
 import Link from "next/link"
 import { cn } from "@workspace/ui/lib/utils"
+import { Label } from "@workspace/ui/components/label"
 
 function DynamicTotal({
   type,
   className,
   boosts,
+  isWonderActive,
 }: {
   type: "withLord" | "noLord"
   className: string
   boosts: EditableBoost[] | null
+  isWonderActive: boolean
 }) {
+  const cond = (b: Boost) => {
+    if (b.boost.activeOn === "wonder" ? isWonderActive : true) {
+      console.log("Active: ", b.boost.name)
+    }
+    return b.boost.activeOn === "wonder" ? isWonderActive : true
+  }
+
   return (
     <span className={className}>
-      {boosts ? totalBoost(boosts.map(normalizeBoost), type).toFixed(0) : "---"}
+      {boosts
+        ? totalBoost(boosts.map(normalizeBoost), type, cond).toFixed(0)
+        : "---"}
     </span>
   )
 }
@@ -100,6 +113,7 @@ function DynamicActions({
 
 export default function Page() {
   const [boosts, setBoosts] = useState<EditableBoost[] | null>(null)
+  const [isWonderActive, setIsWonderActive] = useState(true)
   const router = useRouter()
 
   const handleDataChange = (newData: EditableBoost[]) => {
@@ -125,21 +139,23 @@ export default function Page() {
     <div className="flex h-svh flex-col gap-4 py-4 lg:grid lg:grid-cols-12 lg:gap-12 lg:p-4">
       <Card className="shrink-0 lg:col-span-4 lg:my-auto lg:h-full">
         <CardHeader className="flex items-center justify-between">
-          <CardTitle className="text-nowrap">あなたの総合値</CardTitle>
-          <CardAction className="hidden lg:block">
-            <Suspense
-              fallback={
-                <div className="h-9 w-20 animate-pulse rounded bg-muted" />
-              }
-            >
-              <DynamicActions boosts={boosts} />
-            </Suspense>
+          <CardTitle className="flex items-center text-nowrap">
+            あなたの総合値
+          </CardTitle>
+          <CardAction className="flex items-center gap-2">
+            <Label htmlFor="wonder-active">ワンダー</Label>
+            <Switch
+              id="wonder-active"
+              checked={isWonderActive}
+              onCheckedChange={(e) => setIsWonderActive(e)}
+            />
           </CardAction>
         </CardHeader>
         <CardContent className="my-auto flex w-full flex-col gap-4">
           <div className="min-h-29 rounded-lg border bg-emerald-500/10 p-4">
             <p className="text-5xl font-bold text-emerald-500 lg:text-7xl">
               <DynamicTotal
+                isWonderActive={isWonderActive}
                 type="withLord"
                 className="font-bold text-emerald-500"
                 boosts={boosts}
@@ -155,6 +171,7 @@ export default function Page() {
           <div className="min-h-25 rounded-lg border bg-muted/40 p-4">
             <p className="text-4xl font-bold lg:text-6xl">
               <DynamicTotal
+                isWonderActive={isWonderActive}
                 type="noLord"
                 className="font-bold"
                 boosts={boosts}
@@ -170,7 +187,7 @@ export default function Page() {
         </CardContent>
         <CardFooter>
           <Suspense fallback={null}>
-            <DynamicActions className="lg:hidden" boosts={boosts} />
+            <DynamicActions boosts={boosts} />
           </Suspense>
 
           <Link

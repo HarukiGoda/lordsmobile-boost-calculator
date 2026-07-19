@@ -4,22 +4,22 @@ import type { Boost, TsvKey } from "./types"
 
 // remove column if isOcrOnly ==- true
 export function boostsToTSV(boosts: readonly Boost[], key: TsvKey): string {
-  const sorted = BOOSTS_INFO.flat()
-    .filter((b) => !b.isOcrOnly)
-    .map((b) => ({
-      boost: b,
-      noLord: 0,
-      withLord: 0,
-    })) satisfies Boost[]
+  const boostMap = new Map(
+    BOOSTS_INFO.flat()
+      .filter((b) => !b.isOcrOnly)
+      .map((b): [string, Boost] => [
+        b.name,
+        { boost: b, noLord: 0, withLord: 0 },
+      ])
+  )
+
   boosts.forEach((b) => {
-    ;[...sorted].find((n, i) => {
-      if (n.boost.name === b.boost.name) {
-        ;(sorted[i] as Boost) = b as Boost
-        return true
-      }
-      return false
-    })
+    if (boostMap.has(b.boost.name)) {
+      boostMap.set(b.boost.name, b)
+    }
   })
+
+  const sorted = Array.from(boostMap.values())
 
   if (key === "name") {
     return ["総合値", ...sorted.map((s) => s.boost.name)].join("\t")
