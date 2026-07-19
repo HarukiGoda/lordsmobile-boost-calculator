@@ -17,6 +17,16 @@ import { NextStepButton } from "@/components/steps/next-step"
 import { Separator } from "@workspace/ui/components/separator"
 import { Card, CardContent, CardFooter } from "@workspace/ui/components/card"
 import { PrevStepButton } from "@/components/steps/prev-step"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@workspace/ui/components/dialog"
+import { InfoIcon } from "lucide-react"
+import croppingSample from "@/public/cropping-sample.png"
 
 function LeftCardActions({
   step,
@@ -66,12 +76,34 @@ function OcrResultSection({
           </div>
         )}
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex items-center justify-around">
+        <Dialog>
+          <DialogTrigger
+            render={
+              <Button size="lg" variant="ghost">
+                <InfoIcon />
+                読み取りがうまくいかない時は...
+              </Button>
+            }
+          />
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>読み取りのコツ</DialogTitle>
+              <DialogDescription>
+                ブースト値以外の物が含まれないようにしてください
+              </DialogDescription>
+            </DialogHeader>
+            <Image
+              src={croppingSample}
+              alt="cropping-sample"
+              className="mx-auto"
+            />
+          </DialogContent>
+        </Dialog>
         <NextStepButton
           nextStep={step + 1}
           disabled={loading || currentBoosts.length === 0}
           additionalBoosts={currentBoosts.map((b) => normalizeBoost(b))}
-          className="mx-auto"
         >
           次へ
         </NextStepButton>
@@ -115,7 +147,7 @@ export function OcrImagePage({ step, boosts }: StepProps) {
             </div>
           )}
         </CardContent>
-        <CardFooter className="flex min-h-15 justify-around">
+        <CardFooter className="flex h-full min-h-15 justify-around">
           <Suspense
             fallback={
               <span className="text-sm text-muted-foreground">Loading...</span>
