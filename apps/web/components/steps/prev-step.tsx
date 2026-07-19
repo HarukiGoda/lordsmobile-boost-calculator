@@ -18,7 +18,6 @@ export function PrevStepButton({
       size="lg"
       className={className}
       onClick={() => {
-        console.log(nextStep)
         if (nextStep < STEPS[0]!.step) return
         router.push(`/step/${nextStep}`)
       }}

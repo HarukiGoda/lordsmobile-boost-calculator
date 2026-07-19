@@ -1,11 +1,7 @@
 "use client"
 
-import { EditableBoostsTable } from "@/components/boost/editable-boosts-table"
-import { useBoostsParam } from "@/hooks/use-boosts-param"
-import { useState, useEffect, Suspense, startTransition, useRef } from "react"
-import { Boost, EditableBoost } from "@/lib/boost/types"
-import { BoostsActions } from "@/components/boost/boosts-action"
-import { totalBoost } from "@/lib/boost/total"
+import { useState, Suspense, startTransition } from "react"
+import type { EditableBoost } from "@/lib/boost/types"
 import { normalizeBoost } from "@/lib/boost/normalize"
 import { ScrollArea, ScrollBar } from "@workspace/ui/components/scroll-area"
 import {
@@ -18,103 +14,21 @@ import {
 } from "@workspace/ui/components/card"
 import { Switch } from "@workspace/ui/components/switch"
 import { Badge } from "@workspace/ui/components/badge"
-import { useRouter } from "next/navigation"
 import { encodeBoosts } from "@/lib/codec/boost-codec"
 import { BOOSTS_INFO } from "@/lib/boost/boosts"
 import { buttonVariants } from "@workspace/ui/components/button"
 import Link from "next/link"
 import { cn } from "@workspace/ui/lib/utils"
 import { Label } from "@workspace/ui/components/label"
-
-function DynamicTotal({
-  type,
-  className,
-  boosts,
-  isWonderActive,
-}: {
-  type: "withLord" | "noLord"
-  className: string
-  boosts: EditableBoost[] | null
-  isWonderActive: boolean
-}) {
-  const cond = (b: Boost) => {
-    if (b.boost.activeOn === "wonder" ? isWonderActive : true) {
-      console.log("Active: ", b.boost.name)
-    }
-    return b.boost.activeOn === "wonder" ? isWonderActive : true
-  }
-
-  return (
-    <span className={className}>
-      {boosts
-        ? totalBoost(boosts.map(normalizeBoost), type, cond).toFixed(0)
-        : "---"}
-    </span>
-  )
-}
-
-function DynamicTableContainer({
-  onDataChange,
-  boosts,
-}: {
-  onDataChange: (data: EditableBoost[]) => void
-  boosts: EditableBoost[] | null
-}) {
-  const getBoostsParam = useBoostsParam()
-  const hasFetched = useRef(false)
-
-  useEffect(() => {
-    if (hasFetched.current) return
-    hasFetched.current = true
-
-    getBoostsParam().then((res) => {
-      if (!res) return
-      onDataChange(
-        res.map((b) => ({
-          ...b,
-          noLord: b.noLord.toString(),
-          withLord: b.withLord.toString(),
-        }))
-      )
-    })
-  }, [getBoostsParam, onDataChange])
-
-  return (
-    <EditableBoostsTable
-      initialBoosts={
-        boosts?.filter((b) => !b.boost.isOcrOnly) ??
-        BOOSTS_INFO.flat()
-          .filter((b) => !b.isOcrOnly)
-          .map((b) => ({
-            boost: b,
-            withLord: "0",
-            noLord: "0",
-          }))
-      }
-      onChange={onDataChange}
-    />
-  )
-}
-
-function DynamicActions({
-  boosts,
-  className,
-}: {
-  boosts: EditableBoost[] | null
-  className?: string
-}) {
-  return (
-    <BoostsActions
-      className={className}
-      boosts={boosts ? boosts.map(normalizeBoost) : []}
-    />
-  )
-}
+import {
+  DynamicActions,
+  DynamicTableContainer,
+  DynamicTotal,
+} from "@/components/result/dynamic"
 
 export default function Page() {
   const [boosts, setBoosts] = useState<EditableBoost[] | null>(null)
   const [isWonderActive, setIsWonderActive] = useState(true)
-  const router = useRouter()
 
   const handleDataChange = (newData: EditableBoost[]) => {
     startTransition(() => {
@@ -131,8 +45,15 @@ export default function Page() {
     })
 
     encodeBoosts(newData.map(normalizeBoost)).then((encoded) => {
-      router.replace(`/result?boosts=${encoded}`)
+      const url = new URL(window.location.href)
+      url.searchParams.set("boosts", encoded)
+
+      window.history.replaceState(null, "", url.toString())
     })
+
+    // encodeBoosts(newData.map(normalizeBoost)).then((encoded) => {
+    //     router.replace(`/result?boosts=${encoded}`)
+    // })
   }
 
   return (
@@ -235,7 +156,7 @@ export default function Page() {
               <DynamicTableContainer
                 key={boosts ? boosts.length : 0}
                 boosts={boosts}
-                onDataChange={handleDataChange}
+                onDataChangeAction={handleDataChange}
               />
             </Suspense>
             <ScrollBar orientation="vertical" />
