@@ -12,30 +12,39 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card"
-import { Switch } from "@workspace/ui/components/switch"
 import { Badge } from "@workspace/ui/components/badge"
 import { encodeBoosts } from "@/lib/codec/boost-codec"
 import { BOOSTS_INFO } from "@/lib/boost/boosts"
 import { buttonVariants } from "@workspace/ui/components/button"
 import Link from "next/link"
 import { cn } from "@workspace/ui/lib/utils"
-import { Label } from "@workspace/ui/components/label"
 import {
   DynamicActions,
   DynamicTableContainer,
   DynamicTotal,
 } from "@/components/result/dynamic"
+import { DynamicPreference } from "@/components/result/dynamic-preference"
+
+// ... (他のインポートはそのまま)
 
 export default function Page() {
   const [boosts, setBoosts] = useState<EditableBoost[] | null>(null)
   const [isWonderActive, setIsWonderActive] = useState(true)
 
-  const handleDataChange = (newData: EditableBoost[]) => {
+  // 統合された変更ハンドラ
+  const handleDataChange = (
+    newData: EditableBoost[] | ((prev: EditableBoost[]) => EditableBoost[])
+  ) => {
+    // 関数型更新に対応（DynamicPreference での加算・減算処理を想定）
+    const nextBoosts =
+      typeof newData === "function" ? newData(boosts ?? []) : newData
+
     startTransition(() => {
+      // BOOSTS_INFO に基づく正規化処理
       setBoosts(
         BOOSTS_INFO.flat().map(
           (b) =>
-            newData.find((n) => n.boost.name === b.name) || {
+            nextBoosts.find((n) => n.boost.name === b.name) || {
               boost: b,
               withLord: "",
               noLord: "",
@@ -44,16 +53,12 @@ export default function Page() {
       )
     })
 
-    encodeBoosts(newData.map(normalizeBoost)).then((encoded) => {
+    // URL同期用のエンコード（正規化されたデータを対象にする）
+    void encodeBoosts(nextBoosts.map(normalizeBoost)).then((encoded) => {
       const url = new URL(window.location.href)
       url.searchParams.set("boosts", encoded)
-
       window.history.replaceState(null, "", url.toString())
     })
-
-    // encodeBoosts(newData.map(normalizeBoost)).then((encoded) => {
-    //     router.replace(`/result?boosts=${encoded}`)
-    // })
   }
 
   return (
@@ -64,12 +69,16 @@ export default function Page() {
             あなたの総合値
           </CardTitle>
           <CardAction className="flex items-center gap-2">
-            <Label htmlFor="wonder-active">ワンダー出陣時</Label>
+            <DynamicPreference
+              onWonderActive={setIsWonderActive}
+              onBoostsChange={handleDataChange}
+            ></DynamicPreference>
+            {/*<Label htmlFor="wonder-active">ワンダー出陣時</Label>
             <Switch
               id="wonder-active"
               checked={isWonderActive}
               onCheckedChange={(e) => setIsWonderActive(e)}
-            />
+            />*/}
           </CardAction>
         </CardHeader>
         <CardContent className="my-auto flex w-full flex-col gap-4">

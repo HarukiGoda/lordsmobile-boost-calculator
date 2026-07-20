@@ -6,7 +6,7 @@ import { useImg } from "@/hooks/image/use-img"
 import { useSetImg } from "@/hooks/image/use-set-img"
 import { StepProps } from "@/lib/steps/steps"
 import { useObjectUrl } from "@/hooks/object-url"
-import { NextStepKeepParamButton } from "@/components/steps/next-step"
+import { NextStepButton } from "@/components/steps/next-step"
 import {
   Card,
   CardContent,
@@ -26,12 +26,12 @@ function DynamicFooterAction({
 }) {
   return (
     <>
-      <NextStepKeepParamButton variant="destructive" nextStep={step + 3}>
+      <NextStepButton variant="destructive" nextStep={step + 3}>
         読み込みをスキップ
-      </NextStepKeepParamButton>
-      <NextStepKeepParamButton nextStep={step + 1} disabled={disabled}>
+      </NextStepButton>
+      <NextStepButton nextStep={step + 1} disabled={disabled}>
         次へ
-      </NextStepKeepParamButton>
+      </NextStepButton>
     </>
   )
 }
