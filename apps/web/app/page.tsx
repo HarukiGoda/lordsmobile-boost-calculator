@@ -16,6 +16,10 @@ export const metadata: Metadata = {
     default: "ロードモバイル ブースト計算ツール",
     template: "%s | ロードモバイル ブースト計算ツール",
   },
+  other: {
+    "google-adsense-account": "ca-pub-8070114679956530",
+  },
+
   description:
     "ロードモバイル（ローモバ）のスクリーンショットから戦闘ブースト値や総合値を自動計算。手入力不要、画像認識で正確な数値を算出できる無料の攻略ツールです。",
   keywords: [
