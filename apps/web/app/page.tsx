@@ -123,6 +123,11 @@ export default function Page() {
       </main>
 
       <footer className="border-t bg-muted/20 py-6 text-center text-xs text-muted-foreground">
+        <div className="mb-2 space-x-4">
+          <Link href="/privacy" className="hover:underline">
+            プライバシーポリシー
+          </Link>
+        </div>
         <p>
           © {new Date().getFullYear()} Lordsmobile Boost Calculator. All rights
           reserved.

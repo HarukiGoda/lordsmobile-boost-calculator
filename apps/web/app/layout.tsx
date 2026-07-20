@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import "@workspace/ui/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@workspace/ui/lib/utils"
+import Script from "next/script"
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -42,6 +43,12 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8070114679956530"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
         />
       </head>
       <body>
