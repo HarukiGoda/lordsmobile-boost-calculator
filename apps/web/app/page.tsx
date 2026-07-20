@@ -1,5 +1,3 @@
-"use client"
-
 import Link from "next/link"
 import { buttonVariants } from "@workspace/ui/components/button"
 import {
@@ -11,6 +9,29 @@ import {
 import { Separator } from "@workspace/ui/components/separator"
 import { Calculator, Crop, ShieldAlert, Sparkles, Upload } from "lucide-react"
 import { cn } from "@workspace/ui/lib/utils"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: {
+    default: "ロードモバイル ブースト計算ツール",
+    template: "%s | ロードモバイル ブースト計算ツール",
+  },
+  description:
+    "ロードモバイル（ローモバ）のスクリーンショットから戦闘ブースト値や総合値を自動計算。手入力不要、画像認識で正確な数値を算出できる無料の攻略ツールです。",
+  keywords: [
+    "ロードモバイル",
+    "ローモバ",
+    "ブースト",
+    "ツール",
+    "ブースト計算",
+    "総合値",
+    "攻略",
+    "画像認識",
+    "自動",
+    "スクリーンショット",
+    "スクショ",
+  ],
+}
 
 export default function Page() {
   return (

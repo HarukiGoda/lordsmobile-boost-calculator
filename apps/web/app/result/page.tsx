@@ -25,8 +25,6 @@ import {
 } from "@/components/result/dynamic"
 import { DynamicPreference } from "@/components/result/dynamic-preference"
 
-// ... (他のインポートはそのまま)
-
 export default function Page() {
   const [boosts, setBoosts] = useState<EditableBoost[] | null>(null)
   const [isWonderActive, setIsWonderActive] = useState(true)
@@ -66,7 +64,7 @@ export default function Page() {
       <Card className="shrink-0 lg:col-span-4 lg:my-auto lg:h-full">
         <CardHeader className="flex items-center justify-between">
           <CardTitle className="flex items-center text-nowrap">
-            あなたの総合値
+            <title>あなたの総合値</title>
           </CardTitle>
           <CardAction className="flex items-center gap-2">
             <DynamicPreference
